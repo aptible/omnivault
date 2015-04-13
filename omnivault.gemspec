@@ -10,14 +10,17 @@ Gem::Specification.new do |spec|
   spec.version       = Omnivault::VERSION
   spec.authors       = ['Frank Macreery']
   spec.email         = ['frank@macreery.com']
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = 'Abstract password vault for multiple providers'
+  spec.summary       = 'Abstract password vault for multiple providers'
   spec.homepage      = 'https://github.com/aptible/omnivault'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($RS)
-  spec.test_files    = spec.files.grep(/^spec\//)
+  spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ['lib']
+
+  spec.add_dependency 'aws-keychain-util'
+  spec.add_dependency 'aws-pws'
 
   spec.add_development_dependency 'bundler', '~> 1.8'
   spec.add_development_dependency 'aptible-tasks'
