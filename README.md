@@ -23,6 +23,31 @@ Add the following line to your application's Gemfile.
 
 And then run `bundle install`.
 
+## Usage
+
+To initialize the the Omnivault, run:
+
+```ruby
+omnivault = Omnivault.autodetect
+```
+
+This will determine an appropriate provider using the following logic:
+
+* If the ENV variable `VAULT` is set, it will use that provider, i.e.,
+  - Apple Keychain for `VAULT=apple`
+  - PWS for `VAULT=pws`
+* If no ENV variable is set, it will try to use Apple Keychain first, and fall back to PWS if not on Apple OS X.
+
+Then, to use Omnivault, you can:
+
+```ruby
+omnivault.store('foo', 'bar')
+omnivault.entries
+# => { "foo" => "bar" }
+omnivault.fetch("foo")
+# => "bar"
+```
+
 ## TODO
 
 * Add support for 1Password keychains.
