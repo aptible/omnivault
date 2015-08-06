@@ -48,6 +48,54 @@ omnivault.fetch("foo")
 # => "bar"
 ```
 
+## AWS Setup
+
+Omnivault provides a `configure_aws!` method, which can be used to automatically load credentials in the context of the [AWS SDK for Ruby](https://aws.amazon.com/sdk-for-ruby/).
+
+```ruby
+omnivault.configure_aws!
+```
+
+To use this feature, you'll need to set up `aws-keychain-util` or `aws-pws`. With either approach, you can also (optionally) create a new `aws` shell command which wraps the original [AWS CLI](https://aws.amazon.com/cli/) to provide authenticated access to your AWS credentials.
+
+### Apple Keychain
+
+To set up AWS credentials using `aws-keychain-util`:
+
+1. `gem install -N aws-keychain-util`
+2. `aws-creds init`
+3. `aws-creds add`
+
+    - Use 'default' for the account name
+    - Leave the MFA ARN blank
+
+4. (Optional) Add the following file as `aws` somewhere on your `PATH` with higher precedence than `/usr/local/bin`. (`$HOME/.bin` is a good choice.) Make it executable by running `chmod +x aws-safe`.
+
+        #!/bin/bash
+        # $HOME/.bin/aws
+
+        set -e
+
+        export $(aws-creds cat default)
+        /usr/local/bin/aws $@
+
+
+### PWS
+
+On Linux, you can use PWS instead:
+
+1. `gem install -N aws-pws`
+2. `aws-pws init`
+3. (Optional) Add the following file as `aws` somewhere on your `PATH` with higher precedence than `/usr/local/bin`.
+
+        #!/bin/bash
+        # $HOME/.bin/aws
+
+        set -e
+
+        export $(aws-pws cat)
+        /usr/local/bin/aws $@
+
 ## TODO
 
 * Add support for 1Password keychains.
