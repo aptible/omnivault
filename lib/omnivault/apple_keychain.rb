@@ -22,6 +22,7 @@ module Omnivault
       keychain = open_or_create_keychain
       if (entry = keychain.generic_passwords.where(label: key).all.first)
         entry.password = value
+        entry.save!
       else
         keychain.generic_passwords.create(
           service: key,
