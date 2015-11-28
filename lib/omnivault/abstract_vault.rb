@@ -10,7 +10,11 @@ module Omnivault
     end
 
     def self.for_platform
-      AppleKeychain.new
+      if (/darwin/ =~ RUBY_PLATFORM).nil?
+        PWS.new
+      else
+        AppleKeychain.new
+      end
     rescue LoadError
       PWS.new
     end

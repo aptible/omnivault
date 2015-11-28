@@ -17,9 +17,12 @@ Additionally, it supports automatic credential setup for the following libraries
 
 ## Installation
 
-Add the following line to your application's Gemfile.
+Add the following line(s) to your application's Gemfile.
 
     gem 'omnivault'
+
+    # Optional dependency, only works on Mac OS X
+    gem 'aws-keychain-util' 
 
 And then run `bundle install`.
 
@@ -36,7 +39,8 @@ This will determine an appropriate provider using the following logic:
 * If the ENV variable `VAULT` is set, it will use that provider, i.e.,
   - Apple Keychain for `VAULT=apple`
   - PWS for `VAULT=pws`
-* If no ENV variable is set, it will try to use Apple Keychain first, and fall back to PWS if not on Apple OS X.
+* If no ENV variable is set, it will try to use Apple Keychain first on OS X, then PWS. If not on OS X only PWS will be 
+used.
 
 Then, to use Omnivault, you can:
 

@@ -19,8 +19,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'aws-keychain-util'
   spec.add_dependency 'aws-pws'
+
+  # aws-keychain-util is an optional dependency if using Mac OS X.
+  # spec.add_dependency 'aws-keychain-util'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'aptible-tasks'
