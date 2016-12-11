@@ -1,25 +1,22 @@
 module Omnivault
   class AppleKeychain < AbstractVault
-    def initialize
+    attr_accessor :keychain
+
+    def initialize(name = 'default')
       # Need to require within initializer, to avoid LoadError on
       # non-Apple platforms
       require 'keychain'
-      require 'aws-keychain-util/credential_provider'
+
+      @keychain = open_or_create_keychain(name)
     end
 
     def entries
-      keychain = open_or_create_keychain
       Hash[keychain.generic_passwords.all.map do |item|
         [item.label, item.password]
       end]
     end
 
-    def fetch(key)
-      entries[key]
-    end
-
     def store(key, value)
-      keychain = open_or_create_keychain
       if (entry = keychain.generic_passwords.where(label: key).all.first)
         entry.password = value
         entry.save!
@@ -32,18 +29,18 @@ module Omnivault
       end
     end
 
-    def configure_aws!
-      provider = ::AwsKeychainUtil::CredentialProvider.new('default', 'aws')
-      AWS.config(credential_provider: provider)
+    def remove(key)
+      entry = keychain.generic_passwords.where(label: key).all.first
+      entry.delete
     end
 
     private
 
-    def open_or_create_keychain(name = 'aptible-cookbook')
-      keychain = Keychain.open("#{name}.keychain")
+    def open_or_create_keychain(name)
+      keychain = Keychain.open("omnivault-#{name}.keychain")
       return keychain if keychain.exists?
 
-      Keychain.create("#{name}.keychain")
+      Keychain.create("omnivault-#{name}.keychain")
     end
   end
 end

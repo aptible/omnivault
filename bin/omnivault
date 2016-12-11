@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'omnivault/cli'
+rescue
+  require 'rubygems'
+  require 'omnivault/cli'
+end
+
+Omnivault::CLI.start

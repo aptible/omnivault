@@ -1,2 +1,17 @@
-rvm:
-  - "2.1"
+sudo: true
+language: ruby
+cache: bundler
+matrix:
+  include:
+    - os: osx
+      env:
+        - BATS_TEST=test/osx.bats
+    - os: linux
+      env:
+        - BATS_TEST=test/linux.bats
+before_install:
+  - sudo test/install-bats.sh
+script:
+  - bundle exec rake
+  - rake build && gem install pkg/omnivault-*.gem
+  - BUNDLE_GEMFILE= bats $BATS_TEST
