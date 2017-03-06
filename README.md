@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/aptible/omnivault.png?branch=master)](https://travis-ci.org/aptible/omnivault)
 [![Dependency Status](https://gemnasium.com/aptible/omnivault.png)](https://gemnasium.com/aptible/omnivault)
 
-A Ruby library to abstract keychain functionality for storing and retrieiving arbitrary secrets from a variety of password vaults.
+A Ruby library and CLI tool to abstract keychain functionality for storing and retrieiving arbitrary secrets from a variety of password vaults.
 
 Omnivault supports simple key-value secret retrieval with the following password vaults:
 
@@ -15,18 +15,29 @@ Additionally, it supports automatic credential setup for the following libraries
 
 * AWS Ruby SDK (`aws-sdk-v1`, `aws-sdk`)
 
-## Installation
+## Installation and Usage (CLI Tool)
+
+To install for CLI usage, simply run `gem install omnivault` and then refer to `omnivault help` for usage:
+
+```
+Commands:
+  omnivault env [-v VAULT]                                # Print secret values from vault as source-able ENV variables
+  omnivault exec [-v VAULT] COMMAND                       # Execute command with secret values as ENV variables
+  omnivault help [COMMAND]                                # Describe available commands or one specific command
+  omnivault ls [-v VAULT]                                 # List all secret keys from vault
+  omnivault set [-v VAULT] KEY1=value1 [KEY2=value2 ...]  # Set one or more secret values in vault
+  omnivault unset [-v VAULT] KEY1 [KEY2 ...]              # Unset one or more secret values in vault
+```
+
+## Installation (Library)
 
 Add the following line(s) to your application's Gemfile.
 
     gem 'omnivault'
 
-    # Optional dependency, only works on Mac OS X
-    gem 'aws-keychain-util' 
-
 And then run `bundle install`.
 
-## Usage
+## Usage (Library)
 
 To initialize the the Omnivault, run:
 
@@ -39,7 +50,7 @@ This will determine an appropriate provider using the following logic:
 * If the ENV variable `VAULT` is set, it will use that provider, i.e.,
   - Apple Keychain for `VAULT=apple`
   - PWS for `VAULT=pws`
-* If no ENV variable is set, it will try to use Apple Keychain first on OS X, then PWS. If not on OS X only PWS will be 
+* If no ENV variable is set, it will try to use Apple Keychain first on OS X, then PWS. If not on OS X only PWS will be
 used.
 
 Then, to use Omnivault, you can:
@@ -60,51 +71,12 @@ Omnivault provides a `configure_aws!` method, which can be used to automatically
 omnivault.configure_aws!
 ```
 
-To use this feature, you'll need to set up `aws-keychain-util` or `aws-pws`. With either approach, you can also (optionally) create a new `aws` shell command which wraps the original [AWS CLI](https://aws.amazon.com/cli/) to provide authenticated access to your AWS credentials.
+To use this feature, you'll need to set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` secrets in Omnivault:
 
-### Apple Keychain
+```
+omnivault set AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=...
+```
 
-To set up AWS credentials using `aws-keychain-util`:
-
-1. `gem install -N aws-keychain-util`
-2. `aws-creds init`
-3. `aws-creds add`
-
-    - Use 'default' for the account name
-    - Leave the MFA ARN blank
-
-4. (Optional) Add the following file as `aws` somewhere on your `PATH` with higher precedence than `/usr/local/bin`. (`$HOME/.bin` is a good choice.) Make it executable by running `chmod +x aws-safe`.
-
-        #!/bin/bash
-        # $HOME/.bin/aws
-
-        set -e
-
-        export $(aws-creds cat default)
-        /usr/local/bin/aws $@
-
-
-### PWS
-
-On Linux, you can use PWS instead:
-
-1. `gem install -N aws-pws`
-2. `aws-pws init`
-3. (Optional) Add the following file as `aws` somewhere on your `PATH` with higher precedence than `/usr/local/bin`.
-
-        #!/bin/bash
-        # $HOME/.bin/aws
-
-        set -e
-
-        export $(aws-pws cat)
-        /usr/local/bin/aws $@
-
-## TODO
-
-* Add support for 1Password keychains.
-* Write RSpec unit tests.
-* Remove dependence on AWS-specific gems directly
 
 ## Contributing
 
@@ -117,6 +89,6 @@ On Linux, you can use PWS instead:
 
 MIT License, see [LICENSE](LICENSE.md) for details.
 
-Copyright (c) 2015 [Aptible](https://www.aptible.com), Frank Macreery, and contributors.
+Copyright (c) 2017 [Aptible](https://www.aptible.com), Frank Macreery, and contributors.
 
 [<img src="https://s.gravatar.com/avatar/f7790b867ae619ae0496460aa28c5861?s=60" style="border-radius: 50%;" alt="@fancyremarker" />](https://github.com/fancyremarker)
