@@ -1,27 +1,24 @@
-require 'aws/pws'
-require 'aws/pws/credential_provider'
-
 module Omnivault
   class PWS < AbstractVault
-    attr_accessor :client
+    attr_accessor :cli, :raw_data
 
-    def entries
-      @client ||= AWS::PWS::Client.new
-      Hash[@client.raw_data.map { |k, v| [k, v[:password]] }]
+    def initialize(name = 'default')
+      require 'pws'
+
+      @cli ||= ::PWS.new(namespace: name)
+      @raw_data = @cli.instance_variable_get(:@data)
     end
 
-    def fetch(key)
-      entries[key]
+    def entries
+      Hash[raw_data.map { |k, v| [k, v[:password]] }]
     end
 
     def store(key, value)
-      @client ||= AWS::PWS::Client.new
-      @client.cli.add(key, value)
+      cli.add(key, value)
     end
 
-    def configure_aws!
-      provider = AWS::PWS::CredentialProvider.new
-      AWS.config(credential_provider: provider)
+    def remove(key)
+      cli.remove(key)
     end
   end
 end

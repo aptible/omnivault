@@ -1,4 +1,8 @@
 require 'bundler/gem_tasks'
 
-require 'aptible/tasks'
-Aptible::Tasks.load_tasks
+begin
+  require 'aptible/tasks'
+  Aptible::Tasks.load_tasks
+rescue LoadError
+  task :default
+end
