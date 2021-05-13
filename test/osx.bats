@@ -7,7 +7,7 @@ setup() {
 }
 
 teardown() {
-  rm -f $HOME/Library/Keychains/omnivault-bats.keychain
+  security delete-keychain omnivault-bats.keychain
 }
 
 @test "It should install the ruby-keychain gem" {
