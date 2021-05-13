@@ -40,6 +40,7 @@ module Omnivault
       vault = vault_by_name(options[:vault])
       missing = args - vault.entries.keys
       raise Thor::Error, "Keys not found: #{missing.join(', ')}" if missing.any?
+
       args.each do |key|
         vault.remove(key)
       end

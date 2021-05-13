@@ -2,7 +2,7 @@
 
 begin
   require 'omnivault/cli'
-rescue
+rescue StandardError
   require 'rubygems'
   require 'omnivault/cli'
 end
